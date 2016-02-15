@@ -1,6 +1,8 @@
-import java.io.File;
+package ufsc.indexacaoLucene;
+
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -23,10 +25,11 @@ import org.xml.sax.SAXException;
 
 public class Main {
 
-	public static void main(String[] args) throws IOException, ParseException, SAXException, ParserConfigurationException {
+	public static void main(String[] args)
+			throws IOException, ParseException, SAXException, ParserConfigurationException {
 		SAXXMLDocument handler = new SAXXMLDocument();
-		Document doc = handler
-				.getDocument(new FileInputStream(new File("/home/pc/Desktop/Lattes Professores/Carina Lattes.xml")));
+		InputStream arquivoCurriculo = new FileInputStream("curriculos/Carina Lattes.xml");
+		Document doc = handler.getDocument(arquivoCurriculo);
 		Analyzer analyzer = new StandardAnalyzer();
 		IndexWriterConfig iwriterConf = new IndexWriterConfig(analyzer);
 		Directory directory = new RAMDirectory();
