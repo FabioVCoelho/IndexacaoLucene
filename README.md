@@ -23,11 +23,11 @@ endDocument: Quando não possui mais elementos para serem lidos, é chamado este
 
 Exemplo do modo que o SAXParser funciona:
 
-<address-book>
-	<contact type="individual">
-		<name>Zane Pasolini</name>
-	</contact>
-</address-book> 
+address-book>
+	contact type="individual">
+		name>Zane Pasolini</name>
+	/contact>
+/address-book> 
 
 Start Document:
 Star Element:address-book
