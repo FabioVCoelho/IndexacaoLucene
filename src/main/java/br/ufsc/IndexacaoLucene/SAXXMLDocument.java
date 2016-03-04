@@ -38,10 +38,6 @@ public class SAXXMLDocument extends DefaultHandler {
 		return document;
 	}
 
-	public FacetsConfig retornaConfig() {
-		return config;
-	}
-
 	public void startDocument() {
 		document = new Document();
 	}

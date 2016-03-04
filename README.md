@@ -4,7 +4,6 @@ Como o xml do lattes é um xml customizado, não existe um Handler apropriado qu
 
 doc é o documento utilizado pelo Lucene para ser registrado no IndexWriter.
 
-palavrasChaves é uma lista com todas as PALAVRAS-CHAVES encontradas no xml do lattes da pessoa em questão.
 
 Método getDocument(InputStream is)
 
@@ -44,18 +43,20 @@ Método startDocument()
 Cria o documento que será utilizado.
 
 Método startElement()
-O for é utilizado para percorrer todos os atributos encontrados no arquivo e colocados no documento criado para ser integrado ao lucene. Cada if é utilizado para um elemento considerado importante na obtenção de dados do arquivo xml. Porém existiam muitos dados em branco ou que não teriam utilidade nenhuma. Para isso utilizei 2 métodos para a indexação ficar mais limpa. O primeiro é pegar o valor de cada atributo que está passando e verificar se está em branco, se não houver valor, então, não é passado para o documento. E o outro seria verificar se o valor passado pelo elemento é um número, muitos dos números não eram de interesse nenhum, porém, alguns como o telefone para contato seria interessante guardar.(Não fiz isso ainda, queria saber se esse pensamento é válido). E um elemento que achei importante é o PALAVRA-CHAVE que existe no xml, neles estão todos os valores estudado pelo professor, desde uma colaboração no livro, quanto na tese de doutorado. Como as Palavras chaves estão espalhadas pelo arquivo, achei mais viavel guardar todas as palavras em uma lista e guarda-las no documento como um valor só. Porém quando fiz isso foram encontradas várias palavras repetidas. Portanto criei o método verificarPalavrasChavesIguais.
 
-Método verificarPalavrasChavesIguais()
-Utiliza um for de âncora e um for para passar por todos os outros elementos da lista. Quando encontra um valor igual ao da âncora o segundo valor é deletado, e para que a lista continue sem pular palavras é necessário diminuir um index do segundo for. por isso o -1. Após deletar as palavras iguais, adiciono todas as palavras como um valor no documento a ser indexado.
+Método characters.
 
-Método characters não utilizo.
+Método endElement.
 
-Método endElement não utilizo.
+Método endDocument.
 
-Método endDocument quando termina o documento eu utilizo o método verificarPalavrasChavesIguais, assim possuo todas as palavras chaves do arquivo.
+	FacetsConfig config: Utilizado para indexar os elementos como hierarquicos e com vários valores.
+	Document document: documento utilizado para indexação.
+	List<FacetField> book1: Lista com todos os fields que serão indexados no documento.
+	List<String> caminho: Lista com o caminho percorrido, cada vez que o método starElement() é chamado, esta lista adiciona o nome do elemento se for diferente do antigo.
+	List<String> indexParaOConfig: configuração utilizada para a indexação, necessário para não deixar o config como static.
 
-Método verificarNumero(String valor)
- Utiliza um try/catch, utilizando o if como o caso de ser um número e assim retornar um falso na condição. Porém como palavras não podem ser comparadas como int, esse método gera uma Expection, que não é tratada e portanto volta um true, informando que o valor é uma palavra e que deve ser adicionada ao documento.
-
-O main foi utilizado para verificar se o documento estava saindo corretamente.
+	config.setMultiValued(chave, true): Utilizado para que um campo possa ter mais que um valor.
+	config.setHierarchical(chave, true): Utlizado para informar que o elemento é do tipo hierarchical, ou seja, possui um caminho(path)
+	
+	new FacetField(dim, path) : FacetField foi utilizado para indexações do tipo Taxonomy, aonde o arquivo a ser indexado possui um caminho para ser percorrido antes de chegar em seu valor. FacetField é utilizado para categorização de campos, por exemplo quando se necessita buscar todos os autores, cria-se vários FacetField("autor", "nome do autor"). Quando for criada a busca por autor, retornará todos os nomes contidos nesse campo. Para utilizar a indexação do tipo Taxonomy, se utiliza um "dim", que é o rootNode e o "path" seria o "resto" do caminho a ser indexado. Sendo o ultimo, o valor.
