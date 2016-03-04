@@ -26,8 +26,11 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.MultiCollector;
+import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.xml.sax.Attributes;
@@ -107,16 +110,11 @@ public class Test extends DefaultHandler {
 		return indexParaOConfig;
 	}
 
-	
 	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException,
-			InstantiationException, IllegalAccessException {
+			InstantiationException, IllegalAccessException, ParseException {
 		Test handler = new Test();
-		InputStream arquivoCurriculo = new FileInputStream("curriculos/Carina Lattes.xml");
-		InputStream arquivoCurriculo2 = new FileInputStream("curriculos/Adriano Lattes.xml");
-		InputStream arquivoCurriculo3 = new FileInputStream("curriculos/Christiane Lattes.xml");
+		InputStream arquivoCurriculo = new FileInputStream("curriculos/TestDoXML.xml");
 		Document doc = handler.getDocument(arquivoCurriculo);
-		Document doc2 = handler.getDocument(arquivoCurriculo2);
-		Document doc3 = handler.getDocument(arquivoCurriculo3);
 
 		Directory taxoDir = new RAMDirectory();
 		Directory indexDir = new RAMDirectory();
@@ -130,8 +128,6 @@ public class Test extends DefaultHandler {
 		IndexWriterConfig iwriterConf = new IndexWriterConfig(analyzer);
 		IndexWriter iwriter = new IndexWriter(indexDir, iwriterConf);
 		iwriter.addDocument(config.build(taxoWriter, doc));
-		iwriter.addDocument(config.build(taxoWriter, doc2));
-		iwriter.addDocument(config.build(taxoWriter, doc3));
 		iwriter.close();
 		taxoWriter.close();
 
@@ -139,14 +135,15 @@ public class Test extends DefaultHandler {
 
 		IndexReader reader = DirectoryReader.open(indexDir);
 		IndexSearcher searcher = new IndexSearcher(reader);
+		TopScoreDocCollector tdc = TopScoreDocCollector.create(10);
 
 		List<FacetResult> results = new ArrayList<FacetResult>();
 		FacetsCollector fc = new FacetsCollector();
-		FacetsCollector.search(searcher, new MatchAllDocsQuery(), 10, fc);
-
+		FacetsCollector.search(searcher, new MatchAllDocsQuery(), 10, MultiCollector.wrap(fc, tdc));
 		Facets facets = new FastTaxonomyFacetCounts(taxoReader, config, fc);
-		results.add(facets.getTopChildren(10, "CURRICULO-VITAE", "DADOS-GERAIS", "NOME-COMPLETO"));
+		results.add(facets.getTopChildren(10, "FORMACAO-ACADEMICA-TITULACAO", "GRADUACAO", "NOME-DO-ORIENTADOR"));
 
-		System.out.println(results);
+		System.out.println(results.get(0));
+		System.out.println(doc.getFields());
 	}
 }
