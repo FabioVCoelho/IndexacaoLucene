@@ -17,10 +17,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class LattesHandler extends DefaultHandler {
+
 	private Document document;
 	private List<String> caminho;
 
-	public LattesHandler() {
+	public CampoCompleto() {
 		caminho = new ArrayList<String>();
 	}
 
@@ -31,85 +32,34 @@ public class LattesHandler extends DefaultHandler {
 		return document;
 	}
 
-	public void startDocument() {
+	@Override
+	public void startDocument() throws SAXException {
 		document = new Document();
 	}
 
-	public void endDocument() {
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		caminho.add(qName);
+		String caminhoCompleto = "";
+		if (caminho.size() > 1)
+			for (int i = 0; i < caminho.size(); i++)
+				caminhoCompleto += caminho.get(i) + "/";
+		caminhoCompleto += qName;
+		for (int indexDoAtributo = 0; indexDoAtributo < attributes.getLength(); indexDoAtributo++)
+			if (attributes.getValue(indexDoAtributo) != "")
+				document.add(new TextField(caminhoCompleto, attributes.getValue(indexDoAtributo), Store.YES));
 	}
 
-	public void startElement(String uri, String localName, String chave, Attributes atributos) throws SAXException {
-		caminho.add(chave);
-		for (int indexDoAtributo = 0; indexDoAtributo < atributos.getLength(); indexDoAtributo++) {
-			if (caminho.size() == 1 && atributos.getValue(indexDoAtributo) != "") {
-				pathTamanhoUm(atributos.getQName(indexDoAtributo), atributos.getValue(indexDoAtributo));
-			}
-			if (caminho.size() == 2 && atributos.getValue(indexDoAtributo) != "") {
-				pathTamanhoDois(atributos.getQName(indexDoAtributo), atributos.getValue(indexDoAtributo));
-			}
-			if (caminho.size() == 3 && atributos.getValue(indexDoAtributo) != "") {
-				pathTamanhoTres(atributos.getQName(indexDoAtributo), atributos.getValue(indexDoAtributo));
-
-			}
-			if (caminho.size() == 4 && atributos.getValue(indexDoAtributo) != "") {
-				pathTamanhoQuatro(atributos.getQName(indexDoAtributo), atributos.getValue(indexDoAtributo));
-			}
-			if (caminho.size() == 5 && atributos.getValue(indexDoAtributo) != "") {
-				pathTamanhoCinco(atributos.getQName(indexDoAtributo), atributos.getValue(indexDoAtributo));
-			}
-		}
+	@Override
+	public void characters(char[] ch, int start, int length) throws SAXException {
 	}
 
-	public void endElement(String uri, String localName, String qName) {
+	@Override
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 		caminho.remove(qName);
 	}
 
-	public void characters(char ch[], int start, int length) {
-
-	}
-
-	private void pathTamanhoCinco(String fieldName, String value) {
-		document.add(new TextField(caminho.get(1), caminho.get(0), Store.YES));
-		document.add(new TextField(caminho.get(2), caminho.get(0) + "/" + caminho.get(1), Store.YES));
-		document.add(
-				new TextField(caminho.get(3), caminho.get(0) + "/" + caminho.get(1) + "/" + caminho.get(2), Store.YES));
-		document.add(new TextField(caminho.get(4),
-				caminho.get(0) + "/" + caminho.get(1) + "/" + caminho.get(2) + "/" + caminho.get(3), Store.YES));
-		document.add(new TextField(fieldName, caminho.get(0) + "/" + caminho.get(1) + "/" + caminho.get(2) + "/"
-				+ caminho.get(3) + "/" + caminho.get(4), Store.YES));
-		document.add(new TextField(value, caminho.get(0) + "/" + caminho.get(1) + "/" + caminho.get(2) + "/"
-				+ caminho.get(3) + "/" + caminho.get(4) + "/" + fieldName, Store.YES));
-
-	}
-
-	private void pathTamanhoQuatro(String fieldName, String value) {
-		document.add(new TextField(caminho.get(1), caminho.get(0), Store.YES));
-		document.add(new TextField(caminho.get(2), caminho.get(0) + "/" + caminho.get(1), Store.YES));
-		document.add(
-				new TextField(caminho.get(3), caminho.get(0) + "/" + caminho.get(1) + "/" + caminho.get(2), Store.YES));
-		document.add(new TextField(fieldName,
-				caminho.get(0) + "/" + caminho.get(1) + "/" + caminho.get(2) + "/" + caminho.get(3), Store.YES));
-		document.add(new TextField(value,
-				caminho.get(0) + "/" + caminho.get(1) + "/" + caminho.get(2) + "/" + caminho.get(3) + "/" + fieldName,
-				Store.YES));
-	}
-
-	private void pathTamanhoTres(String fieldName, String value) {
-		document.add(new TextField(caminho.get(1), caminho.get(0), Store.YES));
-		document.add(new TextField(caminho.get(2), caminho.get(0) + "/" + caminho.get(1), Store.YES));
-		document.add(new TextField(fieldName, caminho.get(0) + "/" + caminho.get(1) + "/" + caminho.get(2), Store.YES));
-		document.add(new TextField(value,
-				caminho.get(0) + "/" + caminho.get(1) + "/" + caminho.get(2) + "/" + fieldName, Store.YES));
-	}
-
-	private void pathTamanhoDois(String fieldName, String value) {
-		document.add(new TextField(caminho.get(1), caminho.get(0), Store.YES));
-		document.add(new TextField(fieldName, caminho.get(0) + "/" + caminho.get(1), Store.YES));
-		document.add(new TextField(value, caminho.get(0) + "/" + caminho.get(1) + "/" + fieldName, Store.YES));
-	}
-
-	private void pathTamanhoUm(String fieldName, String value) {
-		document.add(new TextField(fieldName, caminho.get(0), Store.YES));
-		document.add(new TextField(value, caminho.get(0) + "/" + fieldName, Store.YES));
+	@Override
+	public void endDocument() throws SAXException {
 	}
 }
