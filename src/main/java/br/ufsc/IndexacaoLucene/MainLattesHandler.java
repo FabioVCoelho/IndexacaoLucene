@@ -25,40 +25,33 @@ import org.xml.sax.SAXException;
 
 public class MainLattesHandler {
 
-	public static void main(String[] args)
-			throws ParserConfigurationException, SAXException, IOException, ParseException {
-		LattesHandler handler = new LattesHandler();
+public static void main(String[] args)
+			throws IOException, ParserConfigurationException, SAXException, ParseException {
+		CampoCompleto handler = new CampoCompleto();
 		InputStream arquivoCurriculo = new FileInputStream("curriculos/Carina Lattes.xml");
 		Document doc = handler.getDocument(arquivoCurriculo);
-		InputStream arquivoCurriculo2 = new FileInputStream("curriculos/Adriano Lattes.xml");
-		Document doc2 = handler.getDocument(arquivoCurriculo2);
-		InputStream arquivoCurriculo3 = new FileInputStream("curriculos/Eduardo Lattes.xml");
-		Document doc3 = handler.getDocument(arquivoCurriculo3);
-		InputStream arquivoCurriculo4 = new FileInputStream("curriculos/Marcelo Lattes.xml");
-		Document doc4 = handler.getDocument(arquivoCurriculo4);
 
 		Directory indexDir = new RAMDirectory();
 		Analyzer analyzer = new StandardAnalyzer();
 		IndexWriterConfig iwriterConf = new IndexWriterConfig(analyzer);
 		IndexWriter iwriter = new IndexWriter(indexDir, iwriterConf);
 		iwriter.addDocument(doc);
-		iwriter.addDocument(doc2);
-		iwriter.addDocument(doc3);
-		iwriter.addDocument(doc4);
 		iwriter.close();
 
 		IndexReader reader = DirectoryReader.open(indexDir);
 		IndexSearcher searcher = new IndexSearcher(reader);
 
-		String procurandoPor = "Carina Friedrich Dorneles";
-		QueryParser queryparser = new QueryParser(procurandoPor, analyzer);
-		Query query = queryparser.parse("CURRICULO-VITAE");
+		List<IndexableField> a = doc.getFields();
+		List<String> listaDeFields = new ArrayList<String>();
+		for (int i = 0; i < 1024; i++)
+			listaDeFields.add(a.get(i).name()); //Como o BooleanQuery chega no máximo a 1024 operações.
+		Object[] fieldsDoDocumento = listaDeFields.toArray(); // Utilizado para passar a List em String[] de Fields, que o MultiField recebe como parametro
+		String[] stringDasFields = Arrays.copyOf(fieldsDoDocumento, fieldsDoDocumento.length, String[].class); 
+		MultiFieldQueryParser queryParser = new MultiFieldQueryParser(stringDasFields, analyzer);
+		Query query = queryParser.parse("Carina Fridrich Dorneles");
 		TopDocs docs = searcher.search(query, 10);
+
 		ScoreDoc[] hits = docs.scoreDocs;
-		for (int i = 0; i < hits.length; i++) {
-			int docId = hits[0].doc;
-			Document d = searcher.doc(docId);
-			System.out.println(d.getField(procurandoPor));
-		}
+		System.out.println(docs.totalHits);
 	}
 }
