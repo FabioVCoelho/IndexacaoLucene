@@ -24,7 +24,6 @@ public class LattesHandler extends DefaultHandler {
 	public CampoCompleto() {
 		caminho = new ArrayList<String>();
 	}
-
 	public Document getDocument(InputStream is) throws ParserConfigurationException, SAXException, IOException {
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		SAXParser parser = spf.newSAXParser();
@@ -40,14 +39,14 @@ public class LattesHandler extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		caminho.add(qName);
-		String caminhoCompleto = "";
-		if (caminho.size() > 1)
+		for (int indexDoAtributo = 0; indexDoAtributo < attributes.getLength(); indexDoAtributo++) {
+			String caminhoCompleto = "";
 			for (int i = 0; i < caminho.size(); i++)
 				caminhoCompleto += caminho.get(i) + "/";
-		caminhoCompleto += qName;
-		for (int indexDoAtributo = 0; indexDoAtributo < attributes.getLength(); indexDoAtributo++)
+			caminhoCompleto += attributes.getQName(indexDoAtributo);
 			if (attributes.getValue(indexDoAtributo) != "")
 				document.add(new TextField(caminhoCompleto, attributes.getValue(indexDoAtributo), Store.YES));
+		}
 	}
 
 	@Override
