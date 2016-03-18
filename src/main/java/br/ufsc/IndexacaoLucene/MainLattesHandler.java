@@ -19,6 +19,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -28,7 +29,7 @@ import org.apache.lucene.store.RAMDirectory;
 import org.xml.sax.SAXException;
 
 public class MainLattesHandler {
-
+	
 	public static void main(String[] args)
 			throws IOException, ParserConfigurationException, SAXException, ParseException {
 		LattesHandler handler = new LattesHandler();
@@ -61,24 +62,18 @@ public class MainLattesHandler {
 		List<String> fields = new ArrayList<String>();
 		List<ScoreDoc[]> hits = new ArrayList<ScoreDoc[]>();
 
-		int indexDeInicio = 0;
-		int indexFinal = 1024;
-
-		while (indexFinal < fieldsDosDocs.size()) {
-			for (int index = indexDeInicio; index < indexFinal; index++)
-				fields.add(fieldsDosDocs.get(index).name());
-			Object[] fieldsDoDocumento = fields.toArray();
-			String[] stringDasFields = Arrays.copyOf(fieldsDoDocumento, fieldsDoDocumento.length, String[].class);
-			MultiFieldQueryParser queryParser = new MultiFieldQueryParser(stringDasFields, analyzer);
-			Query query = queryParser.parse("Friedrich");
-			TopDocs docs = searcher.search(query, 10);
-			hits.add(docs.scoreDocs);
-			indexDeInicio = indexFinal;
-			indexFinal = indexFinal + 1024;
-			if (indexFinal >= fieldsDosDocs.size())
-				indexFinal = fieldsDosDocs.size();
-			fields = new ArrayList<String>();
+		for (IndexableField ff : fieldsDosDocs) {
+			fields.add(ff.name());
 		}
+		
+		BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
+		String[] cps = fields.toArray(new String[fields.size()]);
+		MultiFieldQueryParser queryParser = new MultiFieldQueryParser(cps, analyzer);
+		Query query = queryParser.parse("Friedrich");
+		
+		TopDocs docs = searcher.search(query, 10);
+		hits.add(docs.scoreDocs);
+	
 		System.out.println("Documento em que a Query foi encontra: ");
 		for (int i = 0; i < hits.size(); ++i) {
 			for (int j = 0; j < hits.get(i).length; j++) {

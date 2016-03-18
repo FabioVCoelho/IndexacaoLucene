@@ -21,7 +21,7 @@ public class LattesHandler extends DefaultHandler {
 	private Document document;
 	private List<String> caminho;
 
-	public CampoCompleto() {
+	public LattesHandler() {
 		caminho = new ArrayList<String>();
 	}
 	public Document getDocument(InputStream is) throws ParserConfigurationException, SAXException, IOException {
