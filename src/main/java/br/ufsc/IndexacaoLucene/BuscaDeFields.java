@@ -34,17 +34,14 @@ public class BuscaDeFields {
 		fieldsDosDocs = new ArrayList<IndexableField>();
 	}
 
-	// Mesmo método utilizado no MainCampoCompleto, diferença que é utilizado
-	// somente
-	// um documento, e retorna os fields encontrados neste documento.
+	// SearcherSemFiltroDeDocumentos
 	public List<String> retornarFields(int docID, String procurarPor) throws IOException, ParseException {
 		fieldsDosDocs = reader.document(docID).getFields();
 		for (IndexableField ff : fieldsDosDocs) {
 			QueryParser queryParser = new QueryParser(ff.name(), analyzer);
 			TopDocs td = searcher.search(queryParser.parse(procurarPor), 1);
-			if (td.totalHits > 0) {
+			if (td.totalHits > 0 && !fields.contains(ff.name()))
 				fields.add(ff.name());
-			}
 		}
 		return fields;
 	}
