@@ -15,8 +15,6 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 
 public class SearcherComFiltroDeDocumentos {
@@ -37,8 +35,6 @@ public class SearcherComFiltroDeDocumentos {
 		List<String> fields = new ArrayList<String>();
 		// Lista com todos os fields que serão utilizados nas buscas.
 		List<IndexableField> fieldDosDocs = new ArrayList<IndexableField>();
-		// fields que retornaram da pesquisa.
-		List<String> fieldsEncontrado = new ArrayList<String>();
 		// Adiciona ao fieldDosDocs todos os campos chave
 		for (int numeroDeDocumentos = 0; numeroDeDocumentos < reader.maxDoc(); numeroDeDocumentos++)
 			fieldDosDocs.addAll(reader.document(numeroDeDocumentos).getFields());
@@ -47,7 +43,6 @@ public class SearcherComFiltroDeDocumentos {
 		// que é o modo de o Multiquery receber vários Campos-Chave
 		for (IndexableField ff : fieldDosDocs)
 			fields.add(ff.name());
-
 		// Indicar o valor que procura nos arquivos indexados
 		String procurarPor = "Adriano";
 		// Coloca a quantidade de fields que o MultiFieldQueryParser pode
@@ -58,20 +53,15 @@ public class SearcherComFiltroDeDocumentos {
 		MultiFieldQueryParser queryParser = new MultiFieldQueryParser(cps, analyzer);
 		// Cria um query que é utilizado para realizar a busca com IndexSeacher.
 		Query query = queryParser.parse(procurarPor);
-		// Faz a procura em todos os arquivos indexados e caso o documento tenha
-		// um score
-		// maior que um valor (x declarado pelo lucene) o mesmo é dado com
-		// documento válido
-		// e armazenado no TopDocs.
-		TopDocs docs = searcher.search(query, 10);
-		// hits é um Array de docs, onde fica armazenado qual o número do
-		// documento que foi
-		// armazenado no TopDocs.
-		ScoreDoc[] hits = docs.scoreDocs;
-		// Para todos os hits(Documentos) fieldsEncontrados vai receber os
-		// valores dos campos-chave.
-		for (int i = 0; i < hits.length; ++i)
-			fieldsEncontrado = new BuscaDeFields().retornarFields(hits[i].doc, procurarPor);
+		// Collection que ao coletar o documento que bate com a query, já busca os fields que
+		// possuem o valor procurado.
+		FieldCollector fs = new FieldCollector(procurarPor);
+		// Faz a busca nos arquivos indexados. Passando pelo collection acima.
+		searcher.search(query, fs);
+		// Retorna todos os campos diferentes que foram encontrados nos documentos.
+		// Sem retirar campos duplicados, é encontrado 3649.
+		List<String> camposRetornaveis = fs.retornaFields();
+		System.out.println(camposRetornaveis.size());
 		System.out.println("Método rodou por " + (System.currentTimeMillis() - start) / 1000 + " segundos");
 	}
 }
