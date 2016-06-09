@@ -38,8 +38,7 @@ public class BuscaDeFields {
 	public List<String> retornarFields(int docID, String procurarPor) throws IOException, ParseException {
 		fieldsDosDocs = reader.document(docID).getFields();
 		for (IndexableField ff : fieldsDosDocs) {
-			QueryParser queryParser = new QueryParser(ff.name(), analyzer);
-			TopDocs td = searcher.search(queryParser.parse(procurarPor), 1);
+			TopDocs td = searcher.search(new QueryParser(ff.name(), analyzer).parse(procurarPor), 1);
 			if (td.totalHits > 0 && !fields.contains(ff.name()))
 				fields.add(ff.name());
 		}

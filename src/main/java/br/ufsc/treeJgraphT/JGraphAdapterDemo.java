@@ -15,9 +15,14 @@ package br.ufsc.treeJgraphT;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.jgraph.JGraph;
 import org.jgraph.graph.AttributeMap;
@@ -31,6 +36,9 @@ import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DirectedMultigraph;
+import org.xml.sax.SAXException;
+
+import br.ufsc.IndexacaoLucene.HandlerDeXML;
 
 /**
  * A demo applet that shows how to use JGraph to visualize JGraphT graphs.
@@ -52,8 +60,11 @@ public class JGraphAdapterDemo extends JApplet {
 	 *
 	 * @param args
 	 *            ignored.
+	 * @throws IOException
+	 * @throws SAXException
+	 * @throws ParserConfigurationException
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
 		JGraphAdapterDemo applet = new JGraphAdapterDemo();
 		applet.init();
 
@@ -72,6 +83,20 @@ public class JGraphAdapterDemo extends JApplet {
 		// create a JGraphT graph
 		ListenableGraph<String, DefaultEdge> g = new ListenableDirectedMultigraph<>(DefaultEdge.class);
 
+		HandlerDeXML handler = new HandlerDeXML();
+		InputStream arquivoCurriculo = null;
+		try {
+			arquivoCurriculo = new FileInputStream("curriculos/Dovicchi Lattes.xml");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		try {
+			handler.getDocument(arquivoCurriculo);
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			e.printStackTrace();
+		}
+		g = handler.retornaGraph();
+
 		// create a visualization using JGraph, via an adapter
 		jgAdapter = new JGraphModelAdapter<>(g);
 
@@ -80,30 +105,9 @@ public class JGraphAdapterDemo extends JApplet {
 		adjustDisplaySettings(jgraph);
 		getContentPane().add(jgraph);
 		resize(DEFAULT_SIZE);
-
-		String v1 = "v1";
-		String v2 = "v2";
-		String v3 = "v3";
-		String v4 = "v4";
-
-		// add some sample data (graph manipulated via JGraphT)
-		g.addVertex(v1);
-		g.addVertex(v2);
-		g.addVertex(v3);
-		g.addVertex(v4);
-
-		g.addEdge(v1, v2);
-		g.addEdge(v2, v3);
-		g.addEdge(v3, v1);
-		g.addEdge(v4, v3);
-
-		// position vertices nicely within JGraph component
-		positionVertexAt(v1, 130, 40);
-		positionVertexAt(v2, 60, 200);
-		positionVertexAt(v3, 310, 230);
-		positionVertexAt(v4, 380, 70);
-
-		// that's all there is to it!...
+		String[] y = g.vertexSet().toArray(new String[0]);
+		for (int x = 0; x < 40; x++)
+			positionVertexAt(y[x], 200, x * 4);
 	}
 
 	private void adjustDisplaySettings(JGraph jg) {

@@ -21,9 +21,9 @@ public class Indexador {
 		FSDirectory indexDir = FSDirectory.open(new File("/home/fabio/Desktop/PIBIC/DocumentosIndexados").toPath());
 		Analyzer analyzer = new StandardAnalyzer();
 		HandlerDeXML handler = new HandlerDeXML();
-		InputStream arquivoCurriculo = new FileInputStream("curriculos/Carina Lattes.xml");
-		InputStream arquivoCurriculo2 = new FileInputStream("curriculos/Adriano Lattes.xml");
-		InputStream arquivoCurriculo3 = new FileInputStream("curriculos/Christiane Lattes.xml");
+		InputStream arquivoCurriculo = new FileInputStream("curriculos/Dovicchi Lattes.xml");
+		InputStream arquivoCurriculo2 = new FileInputStream("curriculos/Eduardo Lattes.xml");
+		InputStream arquivoCurriculo3 = new FileInputStream("curriculos/Laercio Lattes.xml");
 		Document doc = handler.getDocument(arquivoCurriculo);
 		Document doc2 = handler.getDocument(arquivoCurriculo2);
 		Document doc3 = handler.getDocument(arquivoCurriculo3);
