@@ -19,7 +19,7 @@ import org.apache.lucene.store.FSDirectory;
 
 public class SearcherComFiltroDeDocumentos {
 
-	public static void main(String[] args) throws IOException, ParseException {
+	public List<String> pesquisar() throws IOException, ParseException {
 		long start = System.currentTimeMillis();
 		// Local aonde está os arquivos indexados
 		FSDirectory indexDir = FSDirectory.open(new File("/home/fabio/Desktop/PIBIC/DocumentosIndexados").toPath());
@@ -63,5 +63,6 @@ public class SearcherComFiltroDeDocumentos {
 		List<String> camposRetornaveis = fs.retornaFields();
 		System.out.println(camposRetornaveis.size());
 		System.out.println("Método rodou por " + (System.currentTimeMillis() - start) / 1000 + " segundos");
+		return camposRetornaveis;
 	}
 }

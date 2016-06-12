@@ -43,9 +43,10 @@ public class SearcherSemFiltroDeDocumentos {
 		// for ( todos os fields(Campo-Chave) que estão nos documentos )
 		// Procure nesse field pela query
 		// Se o query foi encontrado, é colocado no Collection(TopDocs)
-		// Se tiver algum valor no Collection(TopDocs) e que não possua no fields ainda
+		// Se tiver algum valor no Collection(TopDocs) e que não possua no
+		// fields ainda
 		// guarde no fields.
-		// Sem retirar campos duplicados, é encontrado 4982.		
+		// Sem retirar campos duplicados, é encontrado 4982.
 		for (int numeroDeDocumentos = 0; numeroDeDocumentos < reader.maxDoc(); numeroDeDocumentos++) {
 			fieldsDosDocs = reader.document(numeroDeDocumentos).getFields();
 			for (IndexableField ff : fieldsDosDocs) {

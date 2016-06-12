@@ -1,29 +1,16 @@
-/* This program and the accompanying materials are dual-licensed under
- * either
- *
- * (a) the terms of the GNU Lesser General Public License version 2.1
- * as published by the Free Software Foundation, or (at your option) any
- * later version.
- *
- * or (per the licensee's choosing)
- *
- * (b) the terms of the Eclipse Public License v1.0 as published by
- * the Eclipse Foundation.
- */
 package br.ufsc.treeJgraphT;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
-import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.jgraph.JGraph;
 import org.jgraph.graph.AttributeMap;
 import org.jgraph.graph.DefaultGraphCell;
@@ -36,16 +23,9 @@ import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DirectedMultigraph;
-import org.xml.sax.SAXException;
 
-import br.ufsc.IndexacaoLucene.HandlerDeXML;
+import br.ufsc.IndexacaoLucene.SearcherComFiltroDeDocumentos;
 
-/**
- * A demo applet that shows how to use JGraph to visualize JGraphT graphs.
- *
- * @author Barak Naveh
- * @since Aug 3, 2003
- */
 public class JGraphAdapterDemo extends JApplet {
 	private static final long serialVersionUID = 3256444702936019250L;
 	private static final Color DEFAULT_BG_COLOR = Color.decode("#FAFBFF");
@@ -53,6 +33,7 @@ public class JGraphAdapterDemo extends JApplet {
 
 	//
 	private JGraphModelAdapter<String, DefaultEdge> jgAdapter;
+	private List<String> camposRetornaveis;
 
 	/**
 	 * An alternative starting point for this demo, to also allow running this
@@ -60,11 +41,8 @@ public class JGraphAdapterDemo extends JApplet {
 	 *
 	 * @param args
 	 *            ignored.
-	 * @throws IOException
-	 * @throws SAXException
-	 * @throws ParserConfigurationException
 	 */
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
+	public static void main(String[] args) {
 		JGraphAdapterDemo applet = new JGraphAdapterDemo();
 		applet.init();
 
@@ -83,31 +61,49 @@ public class JGraphAdapterDemo extends JApplet {
 		// create a JGraphT graph
 		ListenableGraph<String, DefaultEdge> g = new ListenableDirectedMultigraph<>(DefaultEdge.class);
 
-		HandlerDeXML handler = new HandlerDeXML();
-		InputStream arquivoCurriculo = null;
-		try {
-			arquivoCurriculo = new FileInputStream("curriculos/Dovicchi Lattes.xml");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		try {
-			handler.getDocument(arquivoCurriculo);
-		} catch (ParserConfigurationException | SAXException | IOException e) {
-			e.printStackTrace();
-		}
-		g = handler.retornaGraph();
-
 		// create a visualization using JGraph, via an adapter
 		jgAdapter = new JGraphModelAdapter<>(g);
 
 		JGraph jgraph = new JGraph(jgAdapter);
-
 		adjustDisplaySettings(jgraph);
 		getContentPane().add(jgraph);
 		resize(DEFAULT_SIZE);
-		String[] y = g.vertexSet().toArray(new String[0]);
-		for (int x = 0; x < 40; x++)
-			positionVertexAt(y[x], 200, x * 4);
+
+		try {
+			camposRetornaveis = new SearcherComFiltroDeDocumentos().pesquisar();
+		} catch (IOException | ParseException e) {
+			e.printStackTrace();
+		}
+
+		List<String> algumaLista = new ArrayList<String>();
+		algumaLista.addAll(new SepararString().camposDaPesquisa(camposRetornaveis));
+		for (String string : algumaLista) {
+			g.addVertex(string);
+		}
+		int x2 = 250;
+		int y2 = 10;
+		int y1 = 10;
+		int x1 = 10;
+
+		for (int i = 0; i < algumaLista.size() - 1; i++) {
+			if (algumaLista.get(i + 1).equals("CURRICULO-VITAE"))
+				i++;
+			if (!g.containsEdge(algumaLista.get(i), algumaLista.get(i + 1))) {
+				g.addEdge(algumaLista.get(i), algumaLista.get(i + 1));
+				positionVertexAt(algumaLista.get(i), x1 , y1);
+				positionVertexAt(algumaLista.get(i+1), x2 , y2);
+				y1 = y1+70;
+				y2 = y2+70;
+				if (y1 > 600)	{
+					x1 = x1 + 70;
+					y1 = 10;
+				}
+				if (y2 > 600)	{
+					x2 = x2 + 70;
+					y2 = 10;
+				}
+			}
+		}
 	}
 
 	private void adjustDisplaySettings(JGraph jg) {
@@ -151,7 +147,6 @@ public class JGraphAdapterDemo extends JApplet {
 			implements DirectedGraph<V, E> {
 		private static final long serialVersionUID = 1L;
 
-		@SuppressWarnings("unchecked")
 		ListenableDirectedMultigraph(Class<E> edgeClass) {
 			super((Graph<V, E>) new DirectedMultigraph<Object, E>(edgeClass));
 		}
