@@ -69,29 +69,39 @@ public class JGraphAdapterDemo extends JApplet {
 		getContentPane().add(jgraph);
 		resize(DEFAULT_SIZE);
 
+		// Retorna os campos encontrados pela pesquisa realizada.
 		try {
 			camposRetornaveis = new SearcherComFiltroDeDocumentos().pesquisar();
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
 
-		List<String> algumaLista = new ArrayList<String>();
-		algumaLista.addAll(new SepararString().camposDaPesquisa(camposRetornaveis));
-		for (String string : algumaLista) {
+		List<String> pathsSeparados = new ArrayList<String>();
+		pathsSeparados.addAll(new SepararString().camposDaPesquisa(camposRetornaveis));
+		// Adiciona cada pedaço do caminho como um retangulo no frame.
+		for (String string : pathsSeparados) {
 			g.addVertex(string);
 		}
+		// Ordenação dos retangulos por pixel.
 		int x2 = 250;
 		int y2 = 10;
 		int y1 = 10;
 		int x1 = 10;
 
-		for (int i = 0; i < algumaLista.size() - 1; i++) {
-			if (algumaLista.get(i + 1).equals("CURRICULO-VITAE"))
+		/*
+		 *  Para todos os caminhos encontrados com o SepararString, é criado um edge(ligação
+		 *  entre vértices) do caminho atual para o próximo, caso o próximo caminho seja o
+		 *  CURRICULO-VITAE, é adicionado 1 ao i, para que comece o caminho novamente pelo
+		 *  CURRICULO-VITAE, não havendo assim erros de edges.
+		 *  Os positionVertexAt são para posicionar os Vertices nas coordenadas x,y.
+		 */
+		for (int i = 0; i < pathsSeparados.size() - 1; i++) {
+			if (pathsSeparados.get(i + 1).equals("CURRICULO-VITAE"))
 				i++;
-			if (!g.containsEdge(algumaLista.get(i), algumaLista.get(i + 1))) {
-				g.addEdge(algumaLista.get(i), algumaLista.get(i + 1));
-				positionVertexAt(algumaLista.get(i), x1 , y1);
-				positionVertexAt(algumaLista.get(i+1), x2 , y2);
+			if (!g.containsEdge(pathsSeparados.get(i), pathsSeparados.get(i + 1))) {
+				g.addEdge(pathsSeparados.get(i), pathsSeparados.get(i + 1));
+				positionVertexAt(pathsSeparados.get(i), x1 , y1);
+				positionVertexAt(pathsSeparados.get(i+1), x2 , y2);
 				y1 = y1+70;
 				y2 = y2+70;
 				if (y1 > 600)	{
@@ -124,6 +134,9 @@ public class JGraphAdapterDemo extends JApplet {
 		jg.setBackground(c);
 	}
 
+	/*
+	 * Método retirado da demo. Posiciona o vertice nas coordenadas passadas como x e y.
+	 */
 	@SuppressWarnings("unchecked") // FIXME hb 28-nov-05: See FIXME below
 	private void positionVertexAt(Object vertex, int x, int y) {
 		DefaultGraphCell cell = jgAdapter.getVertexCell(vertex);
@@ -147,6 +160,7 @@ public class JGraphAdapterDemo extends JApplet {
 			implements DirectedGraph<V, E> {
 		private static final long serialVersionUID = 1L;
 
+		@SuppressWarnings("unchecked")
 		ListenableDirectedMultigraph(Class<E> edgeClass) {
 			super((Graph<V, E>) new DirectedMultigraph<Object, E>(edgeClass));
 		}
