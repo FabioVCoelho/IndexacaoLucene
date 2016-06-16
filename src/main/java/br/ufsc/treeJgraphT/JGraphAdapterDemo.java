@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.jgraph.JGraph;
@@ -47,7 +48,7 @@ public class JGraphAdapterDemo extends JApplet {
 		applet.init();
 
 		JFrame frame = new JFrame();
-		frame.getContentPane().add(applet);
+		frame.getContentPane().add(new JScrollPane(applet));
 		frame.setTitle("JGraphT Adapter to JGraph Demo");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
