@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.jgraph.JGraph;
@@ -33,6 +32,7 @@ public class JGraphAdapterDemo extends JApplet {
 	//
 	private JGraphModelAdapter<String, Path> jgAdapter;
 	private List<String> camposRetornaveis;
+	private static JFrame frame;
 
 	/**
 	 * An alternative starting point for this demo, to also allow running this
@@ -43,10 +43,10 @@ public class JGraphAdapterDemo extends JApplet {
 	 */
 	public static void main(String[] args) {
 		JGraphAdapterDemo applet = new JGraphAdapterDemo();
-		applet.init();
 
-		JFrame frame = new JFrame();
-		frame.getContentPane().add(new JScrollPane(applet));
+		frame = new JFrame();
+		applet.init();
+		frame.getContentPane().add(applet);
 		frame.setTitle("JGraphT Adapter to JGraph Demo");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
@@ -59,7 +59,6 @@ public class JGraphAdapterDemo extends JApplet {
 	public void init() {
 		// create a JGraphT graph
 		ListenableGraph<String, Path> g = new ListenableDirectedMultigraph<>(Path.class);
-
 		// create a visualization using JGraph, via an adapter
 		jgAdapter = new JGraphModelAdapter<>(g);
 		JGraph jgraph = new JGraph(jgAdapter);
@@ -143,9 +142,13 @@ public class JGraphAdapterDemo extends JApplet {
 		AttributeMap attr = cell.getAttributes();
 		Rectangle2D bounds = GraphConstants.getBounds(attr);
 
-		Rectangle2D newBounds = new Rectangle2D.Double(x, y, bounds.getWidth(), bounds.getHeight());
+		JpanelParaAction jpanelParaAction = new JpanelParaAction(x, y, bounds);
+		frame.getContentPane().add(jpanelParaAction);
+		jpanelParaAction.retornaRetangulo();
+		// Rectangle2D newBounds = new Rectangle2D.Double(x, y,
+		// bounds.getWidth(), bounds.getHeight());
 
-		GraphConstants.setBounds(attr, newBounds);
+		GraphConstants.setBounds(attr, jpanelParaAction.retornaRetangulo());
 
 		// TODO: Clean up generics once JGraph goes generic
 		AttributeMap cellAttr = new AttributeMap();
