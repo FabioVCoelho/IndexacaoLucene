@@ -5,13 +5,14 @@ import java.awt.event.MouseListener;
 
 public class OuvinteDoMouse implements MouseListener {
 
-	public OuvinteDoMouse() {
-		// TODO Auto-generated constructor stub
+	private String string;
+
+	public OuvinteDoMouse(String string) {
+		this.string = string;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println("oi");
 	}
 
 	@Override
@@ -28,7 +29,7 @@ public class OuvinteDoMouse implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		System.out.println("oi");
+		System.out.println(string);
 	}
 
 	@Override

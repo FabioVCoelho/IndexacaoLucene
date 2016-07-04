@@ -136,17 +136,14 @@ public class JGraphAdapterDemo extends JApplet {
 	 * Método retirado da demo. Posiciona o vertice nas coordenadas passadas
 	 * como x e y.
 	 */
-	@SuppressWarnings("unchecked") // FIXME hb 28-nov-05: See FIXME below
+	@SuppressWarnings("unchecked")
 	private void positionVertexAt(Object vertex, int x, int y) {
 		DefaultGraphCell cell = jgAdapter.getVertexCell(vertex);
 		AttributeMap attr = cell.getAttributes();
 		Rectangle2D bounds = GraphConstants.getBounds(attr);
 
-		JpanelParaAction jpanelParaAction = new JpanelParaAction(x, y, bounds);
+		JpanelParaAction jpanelParaAction = new JpanelParaAction(cell.getUserObject(), x, y, bounds);
 		frame.getContentPane().add(jpanelParaAction);
-		jpanelParaAction.retornaRetangulo();
-		// Rectangle2D newBounds = new Rectangle2D.Double(x, y,
-		// bounds.getWidth(), bounds.getHeight());
 
 		GraphConstants.setBounds(attr, jpanelParaAction.retornaRetangulo());
 
