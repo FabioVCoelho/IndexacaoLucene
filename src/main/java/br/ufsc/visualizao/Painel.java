@@ -1,6 +1,5 @@
 package br.ufsc.visualizao;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -64,18 +63,18 @@ public class Painel extends JPanel {
 		g2.setColor(Color.BLACK);
 
 		/*
-		 * Cria as linhas entre os vértices correspondentes à seu caminho.
-		 * Cria um mouseListener para ao entrar no vértice, mostrar todos os caminhos
-		 * que o mesmo seguiu.
-		 * Algum bug no i = 9 que o vertice2 está sendo o CURRICULO-VITAE, e não tem nenhum
-		 * vértice que deveria se ligar ao mesmo.
+		 * Cria as linhas entre os vértices correspondentes à seu caminho. Cria
+		 * um mouseListener para ao entrar no vértice, mostrar todos os caminhos
+		 * que o mesmo seguiu. Algum bug no i = 9 que o vertice2 está sendo o
+		 * CURRICULO-VITAE, e não tem nenhum vértice que deveria se ligar ao
+		 * mesmo.
 		 */
 		for (int i = 0; i < pathsSeparados.size() - 1; i++) {
 			if (pathsSeparados.get(i + 1).equals(pathsSeparados.get(0))) {
 			} else {
 				JButton vertice1 = vertices.get(acharIndiceDeVerticeIgualAoStringDoPath(pathsSeparados.get(i)));
 				JButton vertice2 = vertices.get(acharIndiceDeVerticeIgualAoStringDoPath(pathsSeparados.get(i + 1)));
-				desenharLinhaEntreVertices(vertice1, vertice2, g2);
+				new DesenharLinhaEntreVertices(vertice1, vertice2, g2);
 				((Retangulo) vertice1).setToolTip(vertice1.toString() + " -> " + vertice2.toString());
 				vertice1.addMouseListener(new ToolTipDoVertice(vertice1));
 			}
@@ -92,14 +91,5 @@ public class Painel extends JPanel {
 				return i;
 		}
 		return 0;
-	}
-
-	/*
-	 * Desenha uma linha entre os dois vértices passados como parametro
-	 */
-	private void desenharLinhaEntreVertices(JButton jButton, JButton jButton2, Graphics2D g2) {
-		g2.setStroke(new BasicStroke(2F));
-		g2.drawLine(jButton.getBounds().x, (int) jButton.getBounds().getCenterY(), jButton2.getBounds().x,
-				(int) jButton2.getBounds().getCenterY());
 	}
 }
