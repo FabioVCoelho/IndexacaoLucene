@@ -3,13 +3,11 @@ package br.ufsc.IndexacaoLucene;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
@@ -17,22 +15,45 @@ import org.xml.sax.SAXException;
 
 public class Indexador {
 
+	/*
+	 * Indexador dos curriculos.
+	 */
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
-		FSDirectory indexDir = FSDirectory.open(new File("/home/fabio/Desktop/PIBIC/DocumentosIndexados").toPath());
+		// Abre o diretório aonde serão armazenados os arquivos indexados.
+		FSDirectory indexDir = FSDirectory.open(new File("arquivosIndexados").toPath());
+		/*
+		 * Antes do texto ser indexado é passado pelo Analyzer que é
+		 * especificado no IndexWriter, é responsável por retirar o texto de
+		 * arquivos txt que devem ser indexados, caso seja utilizado outro tipo
+		 * de arquivo, o mesmo deve ser extraído antes de passar pelo indexador.
+		 */
 		Analyzer analyzer = new StandardAnalyzer();
+		// Handler utilizado para ler arquivos XML
 		HandlerDeXML handler = new HandlerDeXML();
-		InputStream arquivoCurriculo = new FileInputStream("curriculos/Dovicchi Lattes.xml");
-		InputStream arquivoCurriculo2 = new FileInputStream("curriculos/Eduardo Lattes.xml");
-		InputStream arquivoCurriculo3 = new FileInputStream("curriculos/Laercio Lattes.xml");
-		Document doc = handler.getDocument(arquivoCurriculo);
-		Document doc2 = handler.getDocument(arquivoCurriculo2);
-		Document doc3 = handler.getDocument(arquivoCurriculo3);
 
+		/*
+		 * Contém todas as configurações que são usados para criar um IndexWriter
+		 */
 		IndexWriterConfig iwriterConf = new IndexWriterConfig(analyzer);
+		/*
+		 * IndexWriter cria um novo indice ou abre um existe e adiciona, remove
+		 * ou atualiza documentos nesse indice.
+		 */
 		IndexWriter iwriter = new IndexWriter(indexDir, iwriterConf);
-		iwriter.addDocument(doc);
-		iwriter.addDocument(doc2);
-		iwriter.addDocument(doc3);
+
+		// Todos os arquivos que estão no diretório curriculos.
+		String[] arquivos = FSDirectory.listAll(new File("curriculos").toPath());
+
+		/*
+		 * Para cada arquivo que está localizado na pasta curriculos o IndexWriter adiciona
+		 * um documento que teve seu texto retirado pelo Handler.
+		 */
+		for (String string : arquivos) {
+			iwriter.addDocument(handler.getDocument(new FileInputStream("curriculos/" + string)));
+		}
+		// Fecha indexador.
 		iwriter.close();
+		// Fecha diretório.
+		indexDir.close();
 	}
 }
