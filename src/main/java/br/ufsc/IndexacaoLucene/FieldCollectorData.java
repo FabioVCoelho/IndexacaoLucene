@@ -19,14 +19,16 @@ public class FieldCollectorData implements LeafCollector {
 	public void setScorer(Scorer scorer) throws IOException {
 	}
 
-	// Utiliza um SearcherSemFiltroDeDocumentos para somente um Documento que foi coletado
-	// pelo query. Uso try/catch pq não posso dar throw.
+	/*
+	 * Utiliza um SearcherSemFiltroDeDocumentos para somente um Documento que
+	 * foi coletado pelo query.
+	 */
 	public void collect(int doc) throws IOException {
-			try {
-				fieldsEncontrado.addAll(new BuscaDeFields().retornarFields(doc, procurarPor));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+		try {
+			fieldsEncontrado.addAll(new BuscaDeFields().retornarFields(doc, procurarPor));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public List<String> retornaFields() {

@@ -26,7 +26,7 @@ public class BuscaDeFields {
 	private List<IndexableField> fieldsDosDocs;
 
 	public BuscaDeFields() throws IOException {
-		indexDir = FSDirectory.open(new File("/home/fabio/Desktop/PIBIC/DocumentosIndexados").toPath());
+		indexDir = FSDirectory.open(new File("arquivosIndexados").toPath());
 		analyzer = new StandardAnalyzer();
 		reader = DirectoryReader.open(indexDir);
 		searcher = new IndexSearcher(reader);
