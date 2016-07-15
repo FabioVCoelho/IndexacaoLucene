@@ -22,7 +22,7 @@ public class SearcherComFiltroDeDocumentos {
 	public List<String> pesquisar() throws IOException, ParseException {
 		long start = System.currentTimeMillis();
 		// Local aonde está os arquivos indexados
-		FSDirectory indexDir = FSDirectory.open(new File("/home/fabio/Desktop/PIBIC/DocumentosIndexados").toPath());
+		FSDirectory indexDir = FSDirectory.open(new File("arquivosIndexados").toPath());
 		// Analisador padrão do Lucene
 		Analyzer analyzer = new StandardAnalyzer();
 		// Leitor dos arquivos Indexados
@@ -53,12 +53,14 @@ public class SearcherComFiltroDeDocumentos {
 		MultiFieldQueryParser queryParser = new MultiFieldQueryParser(cps, analyzer);
 		// Cria um query que é utilizado para realizar a busca com IndexSeacher.
 		Query query = queryParser.parse(procurarPor);
-		// Collection que ao coletar o documento que bate com a query, já busca os fields que
+		// Collection que ao coletar o documento que bate com a query, já busca
+		// os fields que
 		// possuem o valor procurado.
 		FieldCollector fs = new FieldCollector(procurarPor);
 		// Faz a busca nos arquivos indexados. Passando pelo collection acima.
 		searcher.search(query, fs);
-		// Retorna todos os campos diferentes que foram encontrados nos documentos.
+		// Retorna todos os campos diferentes que foram encontrados nos
+		// documentos.
 		// Sem retirar campos duplicados, é encontrado 3649.
 		List<String> camposRetornaveis = fs.retornaFields();
 		System.out.println(camposRetornaveis.size());
