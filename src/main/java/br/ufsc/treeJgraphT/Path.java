@@ -10,5 +10,5 @@ public class Path extends DefaultEdge {
 	public String toString() {
 		return "";
 	}
-	
+
 }

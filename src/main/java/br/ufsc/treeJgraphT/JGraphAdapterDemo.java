@@ -23,6 +23,7 @@ import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DirectedMultigraph;
 
 import br.ufsc.IndexacaoLucene.SearcherComFiltroDeDocumentos;
+import br.ufsc.visualizao.SepararString;
 
 public class JGraphAdapterDemo extends JApplet {
 	private static final long serialVersionUID = 3256444702936019250L;
@@ -79,6 +80,11 @@ public class JGraphAdapterDemo extends JApplet {
 		for (String string : pathsSeparados) {
 			g.addVertex(string);
 		}
+
+		// Adicionei um MouseListener no JGraph para mostrar todos os caminhos
+		// quando clicar no Retangulo.
+		jgraph.addMouseListener(new OuvinteDoMouse(jgraph, jgAdapter));
+
 		// Ordenação dos retangulos por pixel.
 		int x2 = 250;
 		int y2 = 10;
@@ -93,6 +99,9 @@ public class JGraphAdapterDemo extends JApplet {
 		 * erros de edges. Os positionVertexAt são para posicionar os Vertices
 		 * nas coordenadas x,y.
 		 */
+		for (String vertex : g.vertexSet()) {
+			jgAdapter.getVertexCell(vertex).getAttributes().put("path", "");
+		}
 		for (int i = 0; i < pathsSeparados.size() - 1; i++) {
 			if (pathsSeparados.get(i + 1).equals("CURRICULO-VITAE"))
 				i++;
@@ -100,6 +109,15 @@ public class JGraphAdapterDemo extends JApplet {
 				g.addEdge(pathsSeparados.get(i), pathsSeparados.get(i + 1));
 				positionVertexAt(pathsSeparados.get(i), x1, y1);
 				positionVertexAt(pathsSeparados.get(i + 1), x2, y2);
+				/*
+				 * O vertex possui um HashMap e para guardar todos os caminhos
+				 * que o vertice seguiu criei um "path" no Map e guardei os
+				 * caminhos.
+				 */
+				jgAdapter.getVertexCell(pathsSeparados.get(i)).getAttributes().put("path",
+						jgAdapter.getVertexCell(pathsSeparados.get(i)).getAttributes().get("path")
+								+ pathsSeparados.get(i) + "->" + pathsSeparados.get(i + 1) + "  ");
+
 				y1 = y1 + 70;
 				y2 = y2 + 70;
 				if (y1 > 600) {
@@ -142,10 +160,9 @@ public class JGraphAdapterDemo extends JApplet {
 		AttributeMap attr = cell.getAttributes();
 		Rectangle2D bounds = GraphConstants.getBounds(attr);
 
-		JpanelParaAction jpanelParaAction = new JpanelParaAction(cell.getUserObject(), x, y, bounds);
-		frame.getContentPane().add(jpanelParaAction);
+		Rectangle2D newBounds = new Rectangle2D.Double(x, y, bounds.getWidth(), bounds.getHeight());
 
-		GraphConstants.setBounds(attr, jpanelParaAction.retornaRetangulo());
+		GraphConstants.setBounds(attr, newBounds);
 
 		// TODO: Clean up generics once JGraph goes generic
 		AttributeMap cellAttr = new AttributeMap();
