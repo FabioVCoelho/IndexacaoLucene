@@ -19,7 +19,7 @@ import org.apache.lucene.store.FSDirectory;
 
 public class SearcherComFiltroDeDocumentos {
 
-	public List<String> pesquisar() throws IOException, ParseException {
+	public List<String> pesquisar(String string2) throws IOException, ParseException {
 		long start = System.currentTimeMillis();
 		// Local aonde está os arquivos indexados
 		FSDirectory indexDir = FSDirectory.open(new File("arquivosIndexados").toPath());
@@ -44,7 +44,7 @@ public class SearcherComFiltroDeDocumentos {
 		for (IndexableField ff : fieldDosDocs)
 			fields.add(ff.name());
 		// Indicar o valor que procura nos arquivos indexados
-		String procurarPor = "Adriano";
+		String procurarPor = string2;
 		// Coloca a quantidade de fields que o MultiFieldQueryParser pode
 		// utilizar.
 		BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);

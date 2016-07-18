@@ -25,6 +25,11 @@ public class HandlerDeXML extends DefaultHandler {
 		caminho = new ArrayList<String>();
 	}
 
+	/*
+	 * SAXParseFactory é utilizado para criar um novo SAX parser que referencia
+	 * o InputStream, arquivo XML, depois o parser chama os metodos para criar
+	 * um documento a ser indexado pelo Lucene.
+	 */
 	public Document getDocument(InputStream is) throws ParserConfigurationException, SAXException, IOException {
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		SAXParser parser = spf.newSAXParser();
@@ -50,9 +55,12 @@ public class HandlerDeXML extends DefaultHandler {
 	 * @see
 	 * saxproject.org/apidoc/org/xml/sax/ContentHandler.html#startElement(java.
 	 * lang.String,%20java.lang.String,%20java.lang.String,%20org.xml.sax.
-	 * Attributes) Ao entrar no elemento é guardado o seu valor no caminho, no
-	 * caso do curriculo, o primeiro valor é o do CURRICULO-VITAE e para cada
-	 * caminhoCompleto é atribuido o valor do dado.
+	 * Attributes) Ao entrar no elemento é guardado o seu valor no caminho e a
+	 * cada elemento que é iniciado é adicionado o caminho a lista. Para recriar
+	 * o caminho completo é utilizado o for e utilizado o mesmo para guardar o
+	 * valor do seu atributo. Ex do curriculo: Curriculo-vitae tem como valor de
+	 * atributo dados-gerais Curriculo-vitae/dados-gerais tem como valor de
+	 * atributo nome-completo
 	 */
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -83,7 +91,8 @@ public class HandlerDeXML extends DefaultHandler {
 	 * 
 	 * @see
 	 * saxproject.org/apidoc/org/xml/sax/ContentHandler.html#endElement(java.
-	 * lang.String,%20java.lang.String,%20java.lang.String)
+	 * lang.String,%20java.lang.String,%20java.lang.String) Quando o elemento
+	 * não possui mais valores ele é retirado da lista do caminho.
 	 */
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
@@ -92,8 +101,9 @@ public class HandlerDeXML extends DefaultHandler {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see saxproject.org/apidoc/org/xml/sax/ContentHandler.html#endDocument()
-	 * Receive notification of the end of the document. 
+	 * Receive notification of the end of the document.
 	 */
 	@Override
 	public void endDocument() throws SAXException {
