@@ -17,10 +17,10 @@ public class SepararString {
 	 *  elemento da lista.
 	 */
 	public List<String> camposDaPesquisa(List<String> camposRetornaveis) {
-		String[] y = camposRetornaveis.toArray(new String[0]);
-		for (int i = 0; i < y.length; i++) {
-			String[] splitado = y[i].split("/");
-			for (String string : splitado) {
+		String[] camposDaBusca = camposRetornaveis.toArray(new String[0]);
+		for (int i = 0; i < camposDaBusca.length; i++) {
+			String[] campoChave = camposDaBusca[i].split("/");
+			for (String string : campoChave) {
 				listaSeparada.add(string);
 			}
 		}
