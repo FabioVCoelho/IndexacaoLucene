@@ -15,7 +15,7 @@ import org.jgrapht.graph.ListenableDirectedGraph;
 import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.hierarchical.JGraphHierarchicalLayout;
 
-import br.ufsc.IndexacaoLucene.SearcherComFiltroDeDocumentos;
+import br.ufsc.IndexacaoLucene.SearcherSemFiltroDeDocumentos;
 
 public class Visualizador {
 
@@ -32,8 +32,9 @@ public class Visualizador {
 
 		// Retorna os campos encontrados pela pesquisa realizada.
 		try {
-			camposRetornaveis = new SearcherComFiltroDeDocumentos().pesquisar(string2);
+			camposRetornaveis = new SearcherSemFiltroDeDocumentos().pesquisar(string2);
 		} catch (IOException | ParseException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -69,7 +70,7 @@ public class Visualizador {
 			}
 		}
 		final JGraphFacade jgf = new JGraphFacade(jgraph);
-		final JGraphHierarchicalLayout layoutifier = new JGraphHierarchicalLayout();
+		final JGraphHierarchicalLayout layoutifier = new JGraphHierarchicalLayout(true);
 		layoutifier.run(jgf);
 
 		final Map<?, ?> nestedMap = jgf.createNestedMap(true, true);

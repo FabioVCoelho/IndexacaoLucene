@@ -15,6 +15,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.NIOFSDirectory;
 
 public class BuscaDeFields {
 
@@ -25,23 +26,25 @@ public class BuscaDeFields {
 	private List<String> fields;
 	private List<IndexableField> fieldsDosDocs;
 
-	public BuscaDeFields() throws IOException {
-		indexDir = FSDirectory.open(new File("arquivosIndexados").toPath());
+	public BuscaDeFields(IndexSearcher searcher) throws IOException {
+		indexDir = NIOFSDirectory.open(new File("arquivosIndexados").toPath());
 		analyzer = new StandardAnalyzer();
+		this.searcher = searcher;
 		reader = DirectoryReader.open(indexDir);
-		searcher = new IndexSearcher(reader);
 		fields = new ArrayList<String>();
 		fieldsDosDocs = new ArrayList<IndexableField>();
 	}
 
 	// SearcherSemFiltroDeDocumentos
 	public List<String> retornarFields(int docID, String procurarPor) throws IOException, ParseException {
+		long start = System.currentTimeMillis();
 		fieldsDosDocs = reader.document(docID).getFields();
 		for (IndexableField ff : fieldsDosDocs) {
 			TopDocs td = searcher.search(new QueryParser(ff.name(), analyzer).parse(procurarPor), 1);
 			if (td.totalHits > 0 && !fields.contains(ff.name()))
 				fields.add(ff.name());
 		}
+		System.out.println("Método BuscaDeFields rodou por " + (System.currentTimeMillis() - start) + " milisegundos");
 		return fields;
 	}
 

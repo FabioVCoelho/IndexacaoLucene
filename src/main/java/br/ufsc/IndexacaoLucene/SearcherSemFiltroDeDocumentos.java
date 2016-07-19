@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
@@ -17,15 +15,14 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
-import org.xml.sax.SAXException;
+import org.apache.lucene.store.NIOFSDirectory;
 
 public class SearcherSemFiltroDeDocumentos {
 
-	public static void main(String[] args)
-			throws IOException, ParserConfigurationException, SAXException, ParseException {
+	public List<String> pesquisar(String string2) throws IOException, ParseException {
 		long start = System.currentTimeMillis();
 		// Local aonde está os arquivos indexados
-		FSDirectory indexDir = FSDirectory.open(new File("/home/fabio/Desktop/PIBIC/DocumentosIndexados").toPath());
+		FSDirectory indexDir = NIOFSDirectory.open(new File("arquivosIndexados").toPath());
 		// Analisador padrão do Lucene
 		Analyzer analyzer = new StandardAnalyzer();
 		// Leitor dos arquivos Indexados
@@ -46,18 +43,19 @@ public class SearcherSemFiltroDeDocumentos {
 		// Se tiver algum valor no Collection(TopDocs) e que não possua no
 		// fields ainda
 		// guarde no fields.
-		// Sem retirar campos duplicados, é encontrado 4982.
 		for (int numeroDeDocumentos = 0; numeroDeDocumentos < reader.maxDoc(); numeroDeDocumentos++) {
 			fieldsDosDocs = reader.document(numeroDeDocumentos).getFields();
 			for (IndexableField ff : fieldsDosDocs) {
 				QueryParser queryParser = new QueryParser(ff.name(), analyzer);
-				TopDocs td = searcher.search(queryParser.parse("Adriano"), 1);
+				TopDocs td = searcher.search(queryParser.parse(string2), 1);
 				if (td.totalHits > 0 && !fields.contains(ff.name()))
 					fields.add(ff.name());
 			}
 		}
 		reader.close();
+		indexDir.close();
 		System.out.println(fields.size());
 		System.out.println("Método rodou por " + (System.currentTimeMillis() - start) / 1000 + " segundos");
+		return fields;
 	}
 }
