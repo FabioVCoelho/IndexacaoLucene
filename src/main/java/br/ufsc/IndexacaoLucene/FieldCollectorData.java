@@ -19,10 +19,23 @@ public class FieldCollectorData implements LeafCollector {
 		this.searcher = searcher;
 	}
 
+	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lucene.apache.org/core/5_5_2/core/org/apache/lucene/search/
+	 * LeafCollector.html#setScorer(org.apache.lucene.search.Scorer)
+	 */
 	public void setScorer(Scorer scorer) throws IOException {
 	}
 
+
+	@Override
 	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lucene.apache.org/core/5_5_2/core/org/apache/lucene/search/
+	 * LeafCollector.html#collect(int)
 	 * Utiliza um SearcherSemFiltroDeDocumentos para somente um Documento que
 	 * foi coletado pelo query.
 	 */

@@ -80,13 +80,13 @@ public class SearcherComFiltroDeDocumentos {
 		FieldCollector fs = new FieldCollector(procurarPor, searcher);
 		// Faz a busca nos arquivos indexados. Passando pelo collection acima.
 		searcher.search(query, fs);
+
+		System.out.println("Achou: " + fs.retornaFields() + " campos com a palavra " + string2);
+		System.out.println("Classe SearcherComFiltroDeDados rodou por " + (System.currentTimeMillis() - start) / 1000
+				+ " segundos");
 		/*
 		 * Retorna todos os campos que foram encontrados nos documentos.
 		 */
-		List<String> camposRetornaveis = fs.retornaFields();
-		System.out.println(camposRetornaveis.size());
-		System.out.println("Classe SearcherComFiltroDeDados rodou por " + (System.currentTimeMillis() - start) / 1000
-				+ " segundos");
-		return camposRetornaveis;
+		return fs.retornaFields();
 	}
 }

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.SwingConstants;
+
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.jgraph.JGraph;
 import org.jgraph.graph.AttributeMap;
@@ -14,6 +16,7 @@ import org.jgrapht.graph.ListenableDirectedGraph;
 
 import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.hierarchical.JGraphHierarchicalLayout;
+import com.jgraph.layout.tree.JGraphCompactTreeLayout;
 
 import br.ufsc.IndexacaoLucene.SearcherSemFiltroDeDocumentos;
 
@@ -34,31 +37,31 @@ public class Visualizador {
 		try {
 			camposRetornaveis = new SearcherSemFiltroDeDocumentos().pesquisar(string2);
 		} catch (IOException | ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		List<String> pathsSeparados = new ArrayList<String>();
 		pathsSeparados.addAll(new SepararString().camposDaPesquisa(camposRetornaveis));
-		// Adiciona cada pedaço do caminho como um retangulo no frame.
+		/*
+		 * Adiciona cada pedaço do caminho como um retangulo no frame. Inicia um
+		 * novo atributo no vértice para uso posterior para guardar todos os
+		 * caminhos utilizados pelo vértice
+		 */
 		for (String string : pathsSeparados) {
 			g.addVertex(string);
 			jgAdapter.getVertexCell(string).getAttributes().put("path", "");
 		}
 
 		// Adiciona um MouseListener no JGraph para mostrar todos os caminhos
-		// quando clicar no Retangulo.
+		// quando clicar no Vertice.
 		jgraph.addMouseListener(new OuvinteDoMouse(jgraph, jgAdapter));
 
 		/*
 		 * Para todos os caminhos encontrados com o SepararString, é criado um
 		 * edge(ligação entre vértices) do caminho atual para o próximo, caso o
 		 * próximo caminho seja o CURRICULO-VITAE não é feito nada, pois
-		 * constaria em uma conexão errada.
-		 */
-		/*
-		 * O vertex possui um HashMap e para guardar todos os caminhos que o
-		 * vertice seguiu criei um "path" no Map e guardei os caminhos.
+		 * constaria em uma conexão errada. É utilizado o atributo "path"
+		 * inicializado para guardar todos os caminhos do vértice
 		 */
 		for (int i = 0; i < pathsSeparados.size() - 1; i++) {
 			if (!g.containsEdge(pathsSeparados.get(i), pathsSeparados.get(i + 1))
@@ -71,8 +74,14 @@ public class Visualizador {
 		}
 		final JGraphFacade jgf = new JGraphFacade(jgraph);
 		final JGraphHierarchicalLayout layoutifier = new JGraphHierarchicalLayout(true);
-		layoutifier.run(jgf);
-
+		try {
+			layoutifier.run(jgf);
+		} catch (Exception e) {
+			System.out.println("Não foi possivel criar gráfico hierarquico");
+			JGraphCompactTreeLayout jctl = new JGraphCompactTreeLayout();
+			jctl.setOrientation(SwingConstants.NORTH);
+			jctl.run(jgf);
+		}
 		final Map<?, ?> nestedMap = jgf.createNestedMap(true, true);
 		jgraph.getGraphLayoutCache().edit(nestedMap);
 

@@ -15,6 +15,14 @@ public class JanelaPrincipal extends JApplet {
 
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * Cria um frame e insere um JPanel com um JScrollPanel dentro, pois o
+	 * gráfico fica muito grande, impossibilitando a visão em uma tela,
+	 * necessitando do Scroll, depois é adiciano ao JPanel o gráfico do JGrapht.
+	 * 
+	 * @Param string: Termo da busca que será utilizado pela classe
+	 * SearcherSemFIltroDeDocumentos.
+	 */
 	public void init(String string) {
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
@@ -33,12 +41,17 @@ public class JanelaPrincipal extends JApplet {
 		scrollpane.setVisible(true);
 	}
 
+	/*
+	 * Janela de busca criada para que o usuario possa inserir o termo que está
+	 * procurando. É utilizado um botão que busca o texto inserido no JTextField
+	 * e passa para o init.
+	 */
 	public void termoDeBusca() {
 		JFrame frame = new JFrame("Termo da pesquisa");
 		JPanel panel = new JPanel();
 		frame.add(panel);
-		final JTextField txtA = new JTextField("Digite o termo da Pesquisa");
-		panel.add(txtA);
+		final JTextField caixaDeTexto = new JTextField("Digite o termo da Pesquisa");
+		panel.add(caixaDeTexto);
 		final JButton botao = new JButton("Buscar");
 		panel.add(botao);
 		botao.addMouseListener(new MouseListener() {
@@ -51,7 +64,7 @@ public class JanelaPrincipal extends JApplet {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				init(txtA.getText());
+				init(caixaDeTexto.getText());
 			}
 
 			@Override

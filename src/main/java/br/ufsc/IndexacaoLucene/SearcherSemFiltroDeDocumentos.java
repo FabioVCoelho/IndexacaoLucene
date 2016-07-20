@@ -54,8 +54,8 @@ public class SearcherSemFiltroDeDocumentos {
 		}
 		reader.close();
 		indexDir.close();
-		System.out.println(fields.size());
-		System.out.println("Método rodou por " + (System.currentTimeMillis() - start) / 1000 + " segundos");
+		System.out.println("Achou: " + fields.size() + " campos com a palavra " + string2);
+		System.out.println("Classe SearcherSemFiltroDeDocumentos rodou por " + (System.currentTimeMillis() - start) / 1000 + " segundos");
 		return fields;
 	}
 }

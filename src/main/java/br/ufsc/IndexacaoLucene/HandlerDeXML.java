@@ -58,9 +58,10 @@ public class HandlerDeXML extends DefaultHandler {
 	 * Attributes) Ao entrar no elemento é guardado o seu valor no caminho e a
 	 * cada elemento que é iniciado é adicionado o caminho a lista. Para recriar
 	 * o caminho completo é utilizado o for e utilizado o mesmo para guardar o
-	 * valor do seu atributo. Ex do curriculo: Curriculo-vitae tem como valor de
-	 * atributo dados-gerais Curriculo-vitae/dados-gerais tem como valor de
-	 * atributo nome-completo
+	 * valor do seu atributo.Attributes contém todos os atributos gerados pelo
+	 * XML Ex do curriculo: Curriculo-vitae tem como attributes, dados-gerais,
+	 * outra-producao, dados-complementares, produção-tecnica, produção
+	 * bibliográfica.
 	 */
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {

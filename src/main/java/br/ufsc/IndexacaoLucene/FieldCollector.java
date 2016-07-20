@@ -16,10 +16,26 @@ public class FieldCollector implements Collector {
 		data = new FieldCollectorData(procurarPor, searcher);
 	}
 
+	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * lucene.apache.org/core/5_5_2/core/org/apache/lucene/search/Collector.html
+	 * #getLeafCollector(org.apache.lucene.index.LeafReaderContext)
+	 */
 	public LeafCollector getLeafCollector(LeafReaderContext context) throws IOException {
 		return data;
 	}
 
+	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * lucene.apache.org/core/5_5_2/core/org/apache/lucene/search/Collector.html
+	 * #needsScores()
+	 */
 	public boolean needsScores() {
 		return false;
 	}
