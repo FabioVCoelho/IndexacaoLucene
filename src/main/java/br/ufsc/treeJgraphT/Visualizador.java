@@ -26,21 +26,25 @@ public class Visualizador {
 	private List<String> camposRetornaveis;
 
 	@SuppressWarnings("unchecked")
-	public JGraph jgraph(String string2) {
+	public JGraph jgraph(String procurarPor) {
 		// create a JGraphT graph
 		ListenableGraph<String, Path> g = new ListenableDirectedGraph<>(Path.class);
 		// create a visualization using JGraph, via an adapter
 		jgAdapter = new JGraphModelAdapter<>(g);
 		JGraph jgraph = new JGraph(jgAdapter);
 
+		// Caso seja necessário modificar a forma como o Vertex é mostrado no
+		// gráfico. Está no default.
+		jgAdapter.setDefaultVertexAttributes(new Vertex().modificar());
+
 		// Retorna os campos encontrados pela pesquisa realizada.
 		try {
-			camposRetornaveis = new SearcherSemFiltroDeDocumentos().pesquisar(string2);
+			camposRetornaveis = new SearcherSemFiltroDeDocumentos().pesquisar(procurarPor);
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
-
 		List<String> pathsSeparados = new ArrayList<String>();
+		// Separa todos os caminhos do resultado da pesquisa.
 		pathsSeparados.addAll(new SepararString().camposDaPesquisa(camposRetornaveis));
 		/*
 		 * Adiciona cada pedaço do caminho como um retangulo no frame. Inicia um
@@ -72,17 +76,27 @@ public class Visualizador {
 				g.addEdge(pathsSeparados.get(i), pathsSeparados.get(i + 1));
 			}
 		}
-		final JGraphFacade jgf = new JGraphFacade(jgraph);
-		final JGraphHierarchicalLayout layoutifier = new JGraphHierarchicalLayout(true);
+
+		// Outros Layouts:
+		// https://www.jgraph.com/downloads/jgraph/api/com/jgraph/layout/JGraphLayout.html
+		final JGraphFacade jgraphFacade = new JGraphFacade(jgraph);
+		final JGraphHierarchicalLayout layoutHierarquico = new JGraphHierarchicalLayout(true);
 		try {
-			layoutifier.run(jgf);
+			layoutHierarquico.run(jgraphFacade);
 		} catch (Exception e) {
 			System.out.println("Não foi possivel criar gráfico hierarquico");
-			JGraphCompactTreeLayout jctl = new JGraphCompactTreeLayout();
-			jctl.setOrientation(SwingConstants.NORTH);
-			jctl.run(jgf);
+			JGraphCompactTreeLayout layoutDeArvore = new JGraphCompactTreeLayout();
+			layoutDeArvore.setOrientation(SwingConstants.NORTH);
+			layoutDeArvore.run(jgraphFacade);
 		}
-		final Map<?, ?> nestedMap = jgf.createNestedMap(true, true);
+		/*
+		 * Jgraph utiliza um Hashmap para armazenar todos os vértices e edges e
+		 * suas respectivas posições, o nestedMap possui os mesmos dados porém
+		 * em posições especificados pelo Layout utilizado. Para editar o
+		 * gráfico original é utilizado o GraphLayoutCache().edit() que muda o
+		 * local dos vertices e edges.
+		 */
+		final Map<?, ?> nestedMap = jgraphFacade.createNestedMap(true, true);
 		jgraph.getGraphLayoutCache().edit(nestedMap);
 
 		jgraph.getGraphLayoutCache().update();
