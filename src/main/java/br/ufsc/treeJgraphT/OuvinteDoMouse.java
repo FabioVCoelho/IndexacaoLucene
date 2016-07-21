@@ -18,6 +18,14 @@ public class OuvinteDoMouse implements MouseListener {
 	}
 
 	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	 * Através do jgraph é possível buscar o elemento determinado no local do
+	 * clique do mouse e caso não seja nulo é utilizado o jgAdapter para buscar
+	 * o Vertex que foi clicado e retorna o path completo armazenado no console.
+	 */
 	public void mouseClicked(MouseEvent e) {
 		Object location = jgraph.getFirstCellForLocation(e.getX(), e.getY());
 		if (location != null) {
@@ -40,6 +48,7 @@ public class OuvinteDoMouse implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
 
 	}
 

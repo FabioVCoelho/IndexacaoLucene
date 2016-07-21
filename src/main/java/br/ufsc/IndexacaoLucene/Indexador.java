@@ -11,6 +11,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.NIOFSDirectory;
 import org.xml.sax.SAXException;
 
 public class Indexador {
@@ -20,7 +21,7 @@ public class Indexador {
 	 */
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
 		// Abre o diretório aonde serão armazenados os arquivos indexados.
-		FSDirectory indexDir = FSDirectory.open(new File("arquivosIndexados").toPath());
+		FSDirectory indexDir = NIOFSDirectory.open(new File("arquivosIndexados").toPath());
 		/*
 		 * Antes do texto ser indexado é passado pelo Analyzer que é
 		 * especificado no IndexWriter, é responsável por retirar o texto de
@@ -30,7 +31,6 @@ public class Indexador {
 		Analyzer analyzer = new StandardAnalyzer();
 		// Handler utilizado para ler arquivos XML
 		HandlerDeXML handler = new HandlerDeXML();
-
 		/*
 		 * Contém todas as configurações que são usados para criar um IndexWriter
 		 */
