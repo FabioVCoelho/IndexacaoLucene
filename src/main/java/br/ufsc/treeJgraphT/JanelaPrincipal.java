@@ -1,6 +1,7 @@
 package br.ufsc.treeJgraphT;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -14,6 +15,7 @@ import javax.swing.JTextField;
 public class JanelaPrincipal extends JApplet {
 
 	private static final long serialVersionUID = 1L;
+	private Dimension DEFAULT_SIZE = new Dimension(900, 700);
 
 	/*
 	 * Cria um frame e insere um JPanel com um JScrollPanel dentro, pois o
@@ -29,13 +31,11 @@ public class JanelaPrincipal extends JApplet {
 		JScrollPane scrollpane = new JScrollPane(panel);
 
 		this.getContentPane().add(scrollpane, BorderLayout.CENTER);
-
 		frame.add(this);
-
 		panel.add(new Visualizador().jgraph(string));
-
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
+		frame.setSize(DEFAULT_SIZE);
 		frame.setVisible(true);
 		panel.setVisible(true);
 		scrollpane.setVisible(true);
