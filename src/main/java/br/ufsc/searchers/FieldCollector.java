@@ -1,4 +1,4 @@
-package br.ufsc.IndexacaoLucene;
+package br.ufsc.searchers;
 
 import java.io.IOException;
 import java.util.List;

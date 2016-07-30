@@ -1,4 +1,4 @@
-package br.ufsc.IndexacaoLucene;
+package br.ufsc.searchers;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,18 +64,7 @@ public class SearchTest {
 			}
 		}
 		System.out.println("Método SemFiltro por " + (System.currentTimeMillis() - start3) / 1000 + " segundos");
-
-		List<String> camposDiferentes = new ArrayList<String>();
-		// Queria comparar os campos dos dois, ver quais são diferentes e
-		// armazenar
-		// nos camposDiferentes. Mas está sendo armazenado tudo do
-		// camposRetornaveis (geralmente ele dá maior que o outro).
-		for (int i = 0; i < camposRetornaveis.size(); i++) {
-			if (fields.contains(camposRetornaveis.get(i)))
-				camposDiferentes.add(camposRetornaveis.get(i));
-		}
-		System.out.println(camposRetornaveis.size());
-		System.out.println(fields.size());
-		System.out.println("Método rodou por " + (System.currentTimeMillis() - start) / 1000 + " segundos");
+		System.out.println("Campos encontrados pelo ComFiltro: " + camposRetornaveis.size());
+		System.out.println("Campos encontrados pelo SemFiltro: " + fields.size());
 	}
 }

@@ -1,4 +1,4 @@
-package br.ufsc.IndexacaoLucene;
+package br.ufsc.searchers;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +81,7 @@ public class SearcherComFiltroDeDocumentos {
 		// Faz a busca nos arquivos indexados. Passando pelo collection acima.
 		searcher.search(query, fs);
 
-		System.out.println("Achou: " + fs.retornaFields() + " campos com a palavra " + string2);
+		System.out.println("Achou: " + fs.retornaFields().size() + " campos com a palavra " + string2);
 		System.out.println("Classe SearcherComFiltroDeDados rodou por " + (System.currentTimeMillis() - start) / 1000
 				+ " segundos");
 		/*

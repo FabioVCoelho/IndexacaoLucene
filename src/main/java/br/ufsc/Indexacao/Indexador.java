@@ -1,4 +1,4 @@
-package br.ufsc.IndexacaoLucene;
+package br.ufsc.Indexacao;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,7 +32,8 @@ public class Indexador {
 		// Handler utilizado para ler arquivos XML
 		HandlerDeXML handler = new HandlerDeXML();
 		/*
-		 * Contém todas as configurações que são usados para criar um IndexWriter
+		 * Contém todas as configurações que são usados para criar um
+		 * IndexWriter
 		 */
 		IndexWriterConfig iwriterConf = new IndexWriterConfig(analyzer);
 		/*
@@ -42,11 +43,12 @@ public class Indexador {
 		IndexWriter iwriter = new IndexWriter(indexDir, iwriterConf);
 
 		// Todos os arquivos que estão no diretório curriculos.
-		String[] arquivos = FSDirectory.listAll(new File("curriculos").toPath());
+		String[] arquivos = NIOFSDirectory.listAll(new File("curriculos").toPath());
 
 		/*
-		 * Para cada arquivo que está localizado na pasta curriculos o IndexWriter adiciona
-		 * um documento que teve seu texto retirado pelo Handler.
+		 * Para cada arquivo que está localizado na pasta curriculos o
+		 * IndexWriter adiciona um documento que teve seu texto retirado pelo
+		 * Handler.
 		 */
 		for (String string : arquivos) {
 			iwriter.addDocument(handler.getDocument(new FileInputStream("curriculos/" + string)));

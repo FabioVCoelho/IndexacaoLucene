@@ -1,4 +1,4 @@
-package br.ufsc.IndexacaoLucene;
+package br.ufsc.Indexacao;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,17 +80,6 @@ public class HandlerDeXML extends DefaultHandler {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * saxproject.org/apidoc/org/xml/sax/ContentHandler.html#characters(char[],%
-	 * 20int,%20int)
-	 */
-	@Override
-	public void characters(char[] ch, int start, int length) throws SAXException {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * saxproject.org/apidoc/org/xml/sax/ContentHandler.html#endElement(java.
 	 * lang.String,%20java.lang.String,%20java.lang.String) Quando o elemento
 	 * não possui mais valores ele é retirado da lista do caminho.
@@ -98,15 +87,5 @@ public class HandlerDeXML extends DefaultHandler {
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		caminho.remove(qName);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see saxproject.org/apidoc/org/xml/sax/ContentHandler.html#endDocument()
-	 * Receive notification of the end of the document.
-	 */
-	@Override
-	public void endDocument() throws SAXException {
 	}
 }
